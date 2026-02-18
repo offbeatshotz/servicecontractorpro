@@ -134,6 +134,7 @@ function ServicesPage() {
                 <p className="text-gray-700 mb-4">{service.description}</p>
                 <p className="text-sm text-gray-600"><strong>Contractor:</strong> {service.contractor}</p>
                 <p className="text-sm text-gray-600"><strong>Zip Code:</strong> {service.zip}</p>
+                <p className="text-sm text-gray-600"><strong>Source:</strong> {service.source}</p>
                 <button className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                   Contact Contractor
                 </button>
