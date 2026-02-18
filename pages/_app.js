@@ -2,7 +2,7 @@ import '../styles/globals.css';
 import Layout from '../components/Layout';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { getAuthToken, decryptToken, removeAuthToken } from '../lib/auth';
+import { getAuthToken, decryptToken, saveAuthToken, removeAuthToken } from '../lib/auth';
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
@@ -11,18 +11,42 @@ function MyApp({ Component, pageProps }) {
   const [loadingAuth, setLoadingAuth] = useState(true);
 
   useEffect(() => {
-    const checkAuth = () => {
-      const token = getAuthToken();
+    const authenticateUser = async () => {
+      setLoadingAuth(true);
+      let token = getAuthToken();
+      let currentUserId = null;
+
       if (token) {
-        const decryptedUserId = decryptToken(token);
-        if (decryptedUserId) {
-          setIsAuthenticated(true);
-          setUserId(decryptedUserId);
-        } else {
+        currentUserId = decryptToken(token);
+        if (!currentUserId) {
           removeAuthToken(); // Invalid token, remove it
-          setIsAuthenticated(false);
-          setUserId(null);
+          token = null; // Force re-authentication
         }
+      }
+
+      if (!token) {
+        // Attempt automatic IP-based login
+        try {
+          const response = await fetch('/api/auth/ip-login');
+          const data = await response.json();
+
+          if (response.ok) {
+            saveAuthToken(data.authToken);
+            currentUserId = data.userId;
+            console.log('Automatic IP-based authentication successful.');
+          } else {
+            console.error('Automatic IP-based authentication failed:', data.message);
+            removeAuthToken();
+          }
+        } catch (err) {
+          console.error('Network error during automatic IP-based authentication:', err);
+          removeAuthToken();
+        }
+      }
+
+      if (currentUserId) {
+        setIsAuthenticated(true);
+        setUserId(currentUserId);
       } else {
         setIsAuthenticated(false);
         setUserId(null);
@@ -30,33 +54,18 @@ function MyApp({ Component, pageProps }) {
       setLoadingAuth(false);
     };
 
-    checkAuth();
+    authenticateUser();
 
-    // Listen for route changes to re-check authentication
-    const handleRouteChange = () => checkAuth();
-    router.events.on('routeChangeComplete', handleRouteChange);
-    return () => {
-      router.events.off('routeChangeComplete', handleRouteChange);
-    };
-  }, [router.events]);
+  }, []); // Run only once on mount
 
-  useEffect(() => {
-    if (!loadingAuth && !isAuthenticated && router.pathname !== '/auth-ip') {
-      router.push('/auth-ip');
-    }
-  }, [loadingAuth, isAuthenticated, router.pathname, router]);
-
-  // Optionally, you might want to show a loading spinner while authenticating
   if (loadingAuth) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <p className="text-gray-700 text-lg">Checking authentication...</p>
+        <p className="text-gray-700 text-lg">Setting up your session...</p>
       </div>
     );
   }
 
-  // If not authenticated and on a protected route, redirect will handle it.
-  // If on /auth-ip or authenticated, render the component.
   return (
     <Layout userId={userId} isAuthenticated={isAuthenticated}> {/* Pass auth status to Layout if needed */}
       <Component {...pageProps} userId={userId} isAuthenticated={isAuthenticated} /> {/* Pass to individual pages */}
