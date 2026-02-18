@@ -6,6 +6,10 @@ function BillingPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [paymentMessage, setPaymentMessage] = useState(null);
+  const [saveMessage, setSaveMessage] = useState(null);
+  const [exportMessage, setExportMessage] = useState(null);
+  const [savingLoading, setSavingLoading] = useState(false);
+  const [exportLoading, setExportLoading] = useState(false);
 
   const fetchInvoices = useCallback(async () => {
     setLoading(true);
@@ -46,11 +50,66 @@ function BillingPage() {
 
       const data = await response.json();
       setPaymentMessage(`Payment successful for Invoice ${invoiceId}! Transaction ID: ${data.transactionId}`);
-      // Optionally refresh invoices or update status locally
-      fetchInvoices(); // Refresh to show updated status
+      fetchInvoices();
     } catch (err) {
       setError(err.message || 'An error occurred during payment.');
       console.error('Payment error:', err);
+    }
+  };
+
+  const handleSaveInvoices = async () => {
+    setSavingLoading(true);
+    setSaveMessage(null);
+    setError(null);
+    try {
+      // In a real app, you might save changes to individual invoices or a batch update.
+      // For simulation, we'll just send the current state of invoices.
+      const response = await fetch('/api/billing/invoices', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(invoices), // Sending the whole array for simplicity
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to save invoices.');
+      }
+
+      setSaveMessage('Invoices saved successfully!');
+    } catch (err) {
+      setError(err.message || 'An error occurred while saving invoices.');
+      console.error('Save invoices error:', err);
+    } finally {
+      setSavingLoading(false);
+    }
+  };
+
+  const handleExportInvoices = async () => {
+    setExportLoading(true);
+    setExportMessage(null);
+    setError(null);
+    try {
+      const response = await fetch('/api/billing/export-invoices');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json(); // Assuming JSON for simulation
+
+      // In a real app, you'd parse the response and trigger a file download
+      const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(data, null, 2))}`;
+      const link = document.createElement('a');
+      link.href = jsonString;
+      link.download = 'invoices.json';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      setExportMessage('Invoices exported successfully!');
+    } catch (err) {
+      setError(err.message || 'An error occurred while exporting invoices.');
+      console.error('Export invoices error:', err);
+    } finally {
+      setExportLoading(false);
     }
   };
 
@@ -63,6 +122,34 @@ function BillingPage() {
         <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-8">
           Billing & Invoices
         </h2>
+
+        <div className="mb-6 flex justify-center space-x-4">
+          <button
+            onClick={handleSaveInvoices}
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            disabled={savingLoading}
+          >
+            {savingLoading ? 'Saving...' : 'Save Current Invoices'}
+          </button>
+          <button
+            onClick={handleExportInvoices}
+            className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            disabled={exportLoading}
+          >
+            {exportLoading ? 'Exporting...' : 'Export Invoices Data'}
+          </button>
+        </div>
+
+        {saveMessage && (
+          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <span className="block sm:inline">{saveMessage}</span>
+          </div>
+        )}
+        {exportMessage && (
+          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <span className="block sm:inline">{exportMessage}</span>
+          </div>
+        )}
 
         {paymentMessage && (
           <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
