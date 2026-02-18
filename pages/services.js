@@ -44,20 +44,27 @@ function ServicesPage() {
           Available Services
         </h2>
 
-        <div className="mb-8 flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+        <div className="mb-8 flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 items-center">
           <input
             type="text"
-            placeholder="Search services..."
+            placeholder="Enter your Zip Code..."
+            className="w-full sm:w-auto p-3 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-lg"
+            value={zipCode}
+            onChange={(e) => setZipCode(e.target.value)}
+          />
+          {/* A conceptual button for geolocation */}
+          <button
+            onClick={() => alert('Geolocation feature coming soon! Please enter your zip code manually.')}
+            className="w-full sm:w-auto py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            Use My Current Location
+          </button>
+          <input
+            type="text"
+            placeholder="Search services by keyword..."
             className="flex-grow p-3 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <input
-            type="text"
-            placeholder="Filter by Zip Code..."
-            className="w-full sm:w-auto p-3 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            value={zipCode}
-            onChange={(e) => setZipCode(e.target.value)}
           />
         </div>
 
