@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import { useState, useEffect, useCallback } from 'react';
+import { getAuthToken } from '../lib/auth';
 
 function SupportPage() {
   const [tickets, setTickets] = useState([]);
@@ -12,8 +13,18 @@ function SupportPage() {
   const fetchTickets = useCallback(async () => {
     setLoading(true);
     setError(null);
+    const authToken = getAuthToken();
+    if (!authToken) {
+      setError('Authentication token not found. Please authenticate.');
+      setLoading(false);
+      return;
+    }
     try {
-      const response = await fetch('/api/support/tickets');
+      const response = await fetch('/api/support/tickets', {
+        headers: {
+          'Authorization': `Bearer ${authToken}`,
+        },
+      });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -41,11 +52,20 @@ function SupportPage() {
       return;
     }
 
+    const authToken = getAuthToken();
+    if (!authToken) {
+      setError('Authentication token not found. Please authenticate.');
+      return;
+    }
+
     try {
       const response = await fetch('/api/support/tickets', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ subject: newTicketSubject, description: newTicketDescription, userId: 'current_user_id' }),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`,
+        },
+        body: JSON.stringify({ subject: newTicketSubject, description: newTicketDescription }),
       });
 
       if (!response.ok) {

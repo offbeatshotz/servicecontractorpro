@@ -1,5 +1,6 @@
-import Head from 'next/head';
 import { useState } from 'react';
+import Head from 'next/head';
+import { getAuthToken } from '../lib/auth';
 
 function PostServicePage() {
   const [title, setTitle] = useState('');
@@ -21,12 +22,20 @@ function PostServicePage() {
       return;
     }
 
+    const authToken = getAuthToken();
+    if (!authToken) {
+      setError('Authentication token not found. Please authenticate.');
+      setLoading(false);
+      return;
+    }
+
     try {
       // Make API call to post a new service
       const response = await fetch('/api/services', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`,
         },
         body: JSON.stringify({ title, description, zipCode }),
       });

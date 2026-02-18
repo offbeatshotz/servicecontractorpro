@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import { useState, useEffect, useCallback } from 'react';
+import { getAuthToken } from '../lib/auth';
 
 function CrmLogsPage() {
   const [logs, setLogs] = useState([]);
@@ -7,7 +8,7 @@ function CrmLogsPage() {
   const [error, setError] = useState(null);
   const [newLogAction, setNewLogAction] = useState('');
   const [newLogDetails, setNewLogDetails] = useState('');
-  const [newLogUser, setNewLogUser] = useState('Admin'); // Default user
+  // const [newLogUser, setNewLogUser] = useState('Admin'); // Default user, now derived from auth
   const [addLogLoading, setAddLogLoading] = useState(false);
   const [addLogMessage, setAddLogMessage] = useState(null);
   const [exportLoading, setExportLoading] = useState(false);
@@ -16,8 +17,18 @@ function CrmLogsPage() {
   const fetchLogs = useCallback(async () => {
     setLoading(true);
     setError(null);
+    const authToken = getAuthToken();
+    if (!authToken) {
+      setError('Authentication token not found. Please authenticate.');
+      setLoading(false);
+      return;
+    }
     try {
-      const response = await fetch('/api/crm/logs');
+      const response = await fetch('/api/crm/logs', {
+        headers: {
+          'Authorization': `Bearer ${authToken}`,
+        },
+      });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -41,8 +52,15 @@ function CrmLogsPage() {
     setAddLogMessage(null);
     setError(null);
 
-    if (!newLogAction || !newLogUser) {
-      setError('Action and User are required to add a log.');
+    if (!newLogAction) {
+      setError('Action is required to add a log.');
+      setAddLogLoading(false);
+      return;
+    }
+
+    const authToken = getAuthToken();
+    if (!authToken) {
+      setError('Authentication token not found. Please authenticate.');
       setAddLogLoading(false);
       return;
     }
@@ -50,8 +68,11 @@ function CrmLogsPage() {
     try {
       const response = await fetch('/api/crm/logs', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: newLogAction, details: newLogDetails, user: newLogUser }),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`,
+        },
+        body: JSON.stringify({ action: newLogAction, details: newLogDetails }),
       });
 
       if (!response.ok) {
@@ -75,8 +96,20 @@ function CrmLogsPage() {
     setExportLoading(true);
     setExportMessage(null);
     setError(null);
+
+    const authToken = getAuthToken();
+    if (!authToken) {
+      setError('Authentication token not found. Please authenticate.');
+      setExportLoading(false);
+      return;
+    }
+
     try {
-      const response = await fetch('/api/crm/export-logs');
+      const response = await fetch('/api/crm/export-logs', {
+        headers: {
+          'Authorization': `Bearer ${authToken}`,
+        },
+      });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -160,6 +193,8 @@ function CrmLogsPage() {
                 onChange={(e) => setNewLogDetails(e.target.value)}
               ></textarea>
             </div>
+            {/* The user for the log will be derived from the auth token, no need for explicit input */}
+            {/*
             <div>
               <label htmlFor="logUser" className="block text-sm font-medium text-gray-700">User</label>
               <input
@@ -171,6 +206,7 @@ function CrmLogsPage() {
                 required
               />
             </div>
+            */}
             <div>
               <button
                 type="submit"

@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import { useState, useEffect, useCallback } from 'react';
+import { getAuthToken } from '../lib/auth';
 
 function BillingPage() {
   const [invoices, setInvoices] = useState([]);
@@ -14,8 +15,18 @@ function BillingPage() {
   const fetchInvoices = useCallback(async () => {
     setLoading(true);
     setError(null);
+    const authToken = getAuthToken();
+    if (!authToken) {
+      setError('Authentication token not found. Please authenticate.');
+      setLoading(false);
+      return;
+    }
     try {
-      const response = await fetch('/api/billing/invoices');
+      const response = await fetch('/api/billing/invoices', {
+        headers: {
+          'Authorization': `Bearer ${authToken}`,
+        },
+      });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -36,10 +47,18 @@ function BillingPage() {
   const handlePayInvoice = async (invoiceId, amount) => {
     setPaymentMessage(null);
     setError(null);
+    const authToken = getAuthToken();
+    if (!authToken) {
+      setError('Authentication token not found. Please authenticate.');
+      return;
+    }
     try {
       const response = await fetch('/api/billing/payments', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`,
+        },
         body: JSON.stringify({ invoiceId, amount, paymentMethod: 'Credit Card' }),
       });
 
@@ -61,12 +80,19 @@ function BillingPage() {
     setSavingLoading(true);
     setSaveMessage(null);
     setError(null);
+    const authToken = getAuthToken();
+    if (!authToken) {
+      setError('Authentication token not found. Please authenticate.');
+      setSavingLoading(false);
+      return;
+    }
     try {
-      // In a real app, you might save changes to individual invoices or a batch update.
-      // For simulation, we'll just send the current state of invoices.
       const response = await fetch('/api/billing/invoices', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`,
+        },
         body: JSON.stringify(invoices), // Sending the whole array for simplicity
       });
 
@@ -88,14 +114,23 @@ function BillingPage() {
     setExportLoading(true);
     setExportMessage(null);
     setError(null);
+    const authToken = getAuthToken();
+    if (!authToken) {
+      setError('Authentication token not found. Please authenticate.');
+      setExportLoading(false);
+      return;
+    }
     try {
-      const response = await fetch('/api/billing/export-invoices');
+      const response = await fetch('/api/billing/export-invoices', {
+        headers: {
+          'Authorization': `Bearer ${authToken}`,
+        },
+      });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json(); // Assuming JSON for simulation
 
-      // In a real app, you'd parse the response and trigger a file download
       const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(data, null, 2))}`;
       const link = document.createElement('a');
       link.href = jsonString;
