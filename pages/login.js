@@ -35,7 +35,7 @@ function LoginPage() {
 
       if (email === 'test@example.com' && password === 'password') {
         console.log('Login successful (simulated)!');
-        alert('Login successful (simulated)! In a real app, you'd be redirected.');
+        alert('Login successful (simulated)! In a real app, you\'d be redirected.');
         // router.push('/dashboard'); // Uncomment with useRouter and actual dashboard
       } else {
         setError('Invalid email or password.');
