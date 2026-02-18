@@ -36,6 +36,9 @@ export default async function handler(req, res) {
         const simulatedExternalData = [
           { id: 'ext-5', name: 'Local Electrician Pro', specialty: 'Electrical Installations', location: '123 Main St, Anytown, 02108', contact: '555-1111' },
           { id: 'ext-6', name: 'Reliable Plumbers LLC', specialty: 'Drain Cleaning', location: '456 Oak Ave, Anytown, 90210', contact: '555-2222' },
+          { id: 'ext-7', name: 'Quick Fix Handyman', specialty: 'Home Repairs', location: '789 Pine Ln, Villagetown, 02108', contact: '555-3333' },
+          { id: 'ext-8', name: 'Elite Landscapers', specialty: 'Yard Maintenance', location: '101 Garden Rd, Greentown, 90210', contact: '555-4444' },
+          { id: 'ext-9', name: 'Tech Solutions IT', specialty: 'Computer Repair', location: '222 Byte Blvd, Digitville, 10001', contact: '555-5555' },
         ];
 
         // Filter simulated external data by zip code and query
