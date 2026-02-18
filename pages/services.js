@@ -1,5 +1,6 @@
-import Head from 'next/head';
+
 import { useState, useEffect, useCallback } from 'react';
+import Head from 'next/head';
 
 function ServicesPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -7,6 +8,8 @@ function ServicesPage() {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [geolocationLoading, setGeolocationLoading] = useState(false);
+  const [geolocationError, setGeolocationError] = useState(null);
 
   const fetchServices = useCallback(async () => {
     setLoading(true);
@@ -34,6 +37,51 @@ function ServicesPage() {
     fetchServices();
   }, [fetchServices]);
 
+  const handleGeolocation = () => {
+    setGeolocationLoading(true);
+    setGeolocationError(null);
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setGeolocationLoading(false);
+          // Next step: integrate reverse geocoding API to convert these coords to zip code
+          console.log('Latitude:', position.coords.latitude, 'Longitude:', position.coords.longitude);
+          // Integrate reverse geocoding API
+          fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${position.coords.latitude}&lon=${position.coords.longitude}`)
+            .then(response => response.json())
+            .then(data => {
+              const postcode = data.address.postcode;
+              if (postcode) {
+                setZipCode(postcode); // Update the zipCode state
+                alert(`Found your zip code: ${postcode}. Searching services...`);
+              } else {
+                setGeolocationError('Could not find zip code for your location.');
+                alert('Could not find zip code for your location.');
+              }
+            })
+            .catch(error => {
+              setGeolocationError('Failed to reverse geocode location.');
+              console.error('Reverse geocoding error:', error);
+              alert('Failed to reverse geocode location.');
+            })
+            .finally(() => {
+              setGeolocationLoading(false);
+            });
+        },
+        (error) => {
+          setGeolocationLoading(false);
+          setGeolocationError(error.message);
+          console.error('Geolocation error:', error);
+          alert(`Geolocation failed: ${error.message}`);
+        }
+      );
+    } else {
+      setGeolocationLoading(false);
+      setGeolocationError('Geolocation is not supported by this browser.');
+      alert('Geolocation is not supported by this browser.');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <Head>
@@ -54,10 +102,11 @@ function ServicesPage() {
           />
           {/* A conceptual button for geolocation */}
           <button
-            onClick={() => alert('Geolocation feature coming soon! Please enter your zip code manually.')}
+            onClick={handleGeolocation}
             className="w-full sm:w-auto py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            disabled={geolocationLoading}
           >
-            Use My Current Location
+            {geolocationLoading ? 'Getting Location...' : 'Use My Current Location'}
           </button>
           <input
             type="text"
@@ -67,6 +116,12 @@ function ServicesPage() {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
+
+        {geolocationError && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <span className="block sm:inline">Geolocation Error: {geolocationError}</span>
+          </div>
+        )}
 
         {loading && <p className="text-center text-gray-600">Loading services...</p>}
         {error && <p className="text-center text-red-500">Error: {error}</p>}
@@ -87,7 +142,8 @@ function ServicesPage() {
           </div>
         ) : (
           !loading && !error && <p className="text-center text-gray-600 col-span-full">No services found matching your criteria.</p>
-        )}      </div>
+        )}
+      </div>
     </div>
   );
 }
