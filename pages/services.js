@@ -203,7 +203,7 @@ function ServicesPage() {
                   compService.zip === service.zip &&
                   compService.userId !== service.userId &&
                   compService.price // Ensure price exists
-                );
+                });
 
                 if (competitors.length > 0) {
                   const totalCompetitorPrice = competitors.reduce((sum, compService) => sum + compService.price, 0);
@@ -221,7 +221,7 @@ function ServicesPage() {
                 <h3 className="text-xl font-bold text-textPrimary mb-2">{service.title}</h3>
                 {averageRating && (
                   <p className="text-sm text-yellow-500 mb-2">★ {averageRating} / 5</p>
-                )}
+                })}
                 <p className="text-textSecondary mb-4">{service.description}</p>
 
                 <p className="text-sm text-textSecondary"><strong>Zip Code:</strong> {service.zip}</p>
@@ -256,7 +256,7 @@ function ServicesPage() {
                   Leave Feedback
                 </button>
               </div>
-            )
+            })
           </div>
         ) : (
           !loading && !error && <p className="text-center text-textSecondary col-span-full">No services found matching your criteria.</p>
