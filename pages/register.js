@@ -50,7 +50,8 @@ function RegisterContractorPage() {
   return (
     <div className="min-h-screen bg-backgroundPrimary flex flex-col items-center justify-center py-10">
       <Head>
-        <title>Become a Contractor</title>
+        <title>Become a Contractor - Register Your Services</title>
+        <meta name="description" content="Register to become a contractor on our platform. Offer your services to clients and manage your contracts." />
       </Head>
       <div className="bg-backgroundSecondary p-8 rounded-lg shadow-xl max-w-md w-full text-center">
         <h1 className="text-3xl font-bold text-textPrimary mb-6">Become a Contractor</h1>

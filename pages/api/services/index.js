@@ -1,11 +1,5 @@
 import { getUserIdFromRequest, IP_USER_ID_PREFIX } from '../../../lib/auth';
-
-let allServices = [
-  { id: 'srv-1', title: 'Plumbing Services', description: 'Experienced plumber available for all your needs.', contractor: 'John Doe', zip: '90210', userId: 'ip_user_mock1' },
-  { id: 'srv-2', title: 'Electrical Work', description: 'Certified electrician for residential and commercial projects.', contractor: 'Jane Smith', zip: '10001', userId: 'ip_user_mock2' },
-  { id: 'srv-3', title: 'Garden Maintenance', description: 'Professional gardening and landscaping services.', contractor: 'Green Thumb', zip: '90210', userId: 'ip_user_mock1' },
-  { id: 'srv-4', title: 'Web Development', description: 'Custom website design and development.', contractor: 'Code Master', zip: '02108', userId: 'ip_user_mock3' },
-];
+import { allServices } from '../../../lib/db';
 
 export default async function handler(req, res) {
   const userId = getUserIdFromRequest(req);

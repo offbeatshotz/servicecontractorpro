@@ -105,6 +105,7 @@ function ServicesPage() {
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
       <Head>
         <title>Services - Contract Services</title>
+        <meta name="description" content="Browse available contract services. Find plumbers, electricians, gardeners, web developers, and more in your area." />
       </Head>
       <div className="max-w-4xl mx-auto">
         <h2 className="text-3xl font-extrabold text-textPrimary text-center mb-8">
@@ -153,8 +154,11 @@ function ServicesPage() {
                 <p className="text-textSecondary mb-4">{service.description}</p>
 
                 <p className="text-sm text-textSecondary"><strong>Zip Code:</strong> {service.zip}</p>
-                <p className="text-sm text-textSecondary"><strong>Estimated Price:</strong> ${service.estimatedPrice ? service.estimatedPrice.toFixed(2) : 'N/A'}</p>
-                <p className="text-sm text-textSecondary"><strong>Source:</strong> {service.source}</p>
+                <p className="text-sm text-textSecondary"><strong>Base Price:</strong> ${service.price ? service.price.toFixed(2) : 'N/A'}</p>
+                <p className="text-sm text-textSecondary"><strong>Estimated Price (Local):</strong> ${service.estimatedPrice ? service.estimatedPrice.toFixed(2) : 'N/A'}</p>
+                <p className="text-sm text-textSecondary"><strong>Estimates:</strong> {service.estimates || 'N/A'}</p>
+                <p className="text-sm text-textSecondary"><strong>Plan:</strong> {service.plan || 'N/A'}</p>
+                {service.contractor && <p className="text-sm text-textSecondary"><strong>Contractor:</strong> {service.contractor}</p>}
                 <button
                   onClick={() => handleContactClick(service)} // Updated onClick handler
                   className="mt-4 w-full bg-primary hover:bg-green-700 text-white font-bold py-2 px-4 rounded"

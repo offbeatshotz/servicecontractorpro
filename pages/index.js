@@ -1,6 +1,12 @@
+import Head from 'next/head';
+
 function Home() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-2">
+      <Head>
+        <title>Contract Services - Find and Offer Professional Services</title>
+        <meta name="description" content="Discover a wide range of contract services, find skilled contractors, or become a contractor and offer your services to clients." />
+      </Head>
       <h1 className="text-5xl font-bold text-blue-600">
         Welcome to <span className="text-green-500">Contract Services</span> Web Page
       </h1>
