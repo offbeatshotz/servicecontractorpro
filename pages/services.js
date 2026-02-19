@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Head from 'next/head';
 import ContactForm from '../components/ContactForm'; // Import the new ContactForm component
+import FeedbackForm from '../components/FeedbackForm'; // Import FeedbackForm component
 
 function ServicesPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -14,6 +15,8 @@ function ServicesPage() {
   const [showContactForm, setShowContactForm] = useState(false); // State to control form visibility
   const [selectedServiceForContact, setSelectedServiceForContact] = useState(null); // State to hold service for contact
   const [trackedContractors, setTrackedContractors] = useState([]); // State to hold tracked contractors
+  const [showFeedbackForm, setShowFeedbackForm] = useState(false); // State to control feedback form visibility
+  const [selectedServiceForFeedback, setSelectedServiceForFeedback] = useState(null); // State to hold service for feedback
 
   useEffect(() => {
     const storedTracked = localStorage.getItem('trackedContractors');
@@ -124,6 +127,26 @@ function ServicesPage() {
     });
   };
 
+  const handleLeaveFeedbackClick = (service) => {
+    setSelectedServiceForFeedback(service);
+    setShowFeedbackForm(true);
+  };
+
+  const handleFeedbackFormClose = () => {
+    setShowFeedbackForm(false);
+    setSelectedServiceForFeedback(null);
+  };
+
+  const handleFeedbackSubmit = (newFeedback) => {
+    // Optimistically update the services list with the new feedback
+    setServices(prevServices => prevServices.map(service =>
+      service.id === newFeedback.serviceId
+        ? { ...service, ratings: [...(service.ratings || []), newFeedback] }
+        : service
+    ));
+    // The form will be closed by onSubmit in FeedbackForm
+  };
+
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
       <Head>
@@ -180,7 +203,7 @@ function ServicesPage() {
                   compService.zip === service.zip &&
                   compService.userId !== service.userId &&
                   compService.price // Ensure price exists
-                });
+                );
 
                 if (competitors.length > 0) {
                   const totalCompetitorPrice = competitors.reduce((sum, compService) => sum + compService.price, 0);
@@ -188,9 +211,17 @@ function ServicesPage() {
                 }
               }
 
+              // Calculate average rating
+              const averageRating = service.ratings && service.ratings.length > 0
+                ? (service.ratings.reduce((sum, rating) => sum + rating.score, 0) / service.ratings.length).toFixed(1)
+                : null;
+
               return (
               <div key={service.id} className="bg-backgroundSecondary rounded-lg shadow-md p-6">
                 <h3 className="text-xl font-bold text-textPrimary mb-2">{service.title}</h3>
+                {averageRating && (
+                  <p className="text-sm text-yellow-500 mb-2">★ {averageRating} / 5</p>
+                )}
                 <p className="text-textSecondary mb-4">{service.description}</p>
 
                 <p className="text-sm text-textSecondary"><strong>Zip Code:</strong> {service.zip}</p>
@@ -218,6 +249,12 @@ function ServicesPage() {
                 >
                   {isContractorTracked ? 'Untrack Contractor' : 'Track Contractor'}
                 </button>
+                <button
+                  onClick={() => handleLeaveFeedbackClick(service)}
+                  className="mt-2 w-full bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
+                >
+                  Leave Feedback
+                </button>
               </div>
             )
           </div>
@@ -232,6 +269,15 @@ function ServicesPage() {
           service={selectedServiceForContact}
           onClose={handleContactFormClose}
           onSubmit={handleContactFormSubmit}
+        />
+      )}
+
+      {/* Render the FeedbackForm conditionally */}
+      {showFeedbackForm && selectedServiceForFeedback && (
+        <FeedbackForm
+          service={selectedServiceForFeedback}
+          onClose={handleFeedbackFormClose}
+          onSubmit={handleFeedbackSubmit}
         />
       )}
     </div>
