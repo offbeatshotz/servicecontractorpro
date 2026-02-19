@@ -203,7 +203,7 @@ function ServicesPage() {
                   compService.zip === service.zip &&
                   compService.userId !== service.userId &&
                   compService.price // Ensure price exists
-                });
+                );
 
                 if (competitors.length > 0) {
                   const totalCompetitorPrice = competitors.reduce((sum, compService) => sum + compService.price, 0);

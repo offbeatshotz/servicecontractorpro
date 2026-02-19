@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { getAuthToken, getUserId } from '../../../lib/auth';
+import { getAuthToken, getUserId } from '../../lib/auth';
 
 function UploadLegalFormsPage() {
   const [fileName, setFileName] = useState('');
