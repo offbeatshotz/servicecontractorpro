@@ -73,7 +73,7 @@ function ServicesPage() {
                 setGeolocationError('Could not find zip code for your location.');
                 alert('Could not find zip code for your location.');
               }
-            })
+            )
             .catch(error => {
               setGeolocationError('Failed to reverse geocode location.');
               console.error('Reverse geocoding error:', error);
@@ -81,7 +81,7 @@ function ServicesPage() {
             })
             .finally(() => {
               setGeolocationLoading(false);
-            });
+            })
         },
         (error) => {
           setGeolocationLoading(false);
@@ -219,7 +219,7 @@ function ServicesPage() {
                   {isContractorTracked ? 'Untrack Contractor' : 'Track Contractor'}
                 </button>
               </div>
-            })}
+            )
           </div>
         ) : (
           !loading && !error && <p className="text-center text-textSecondary col-span-full">No services found matching your criteria.</p>
