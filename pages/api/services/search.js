@@ -4,6 +4,12 @@ export default async function handler(req, res) {
     { id: 'internal-2', title: 'Electrical Work', description: 'Certified electrician for residential and commercial projects.', contractor: 'Jane Smith', zip: '10001', source: 'internal' },
     { id: 'internal-3', title: 'Garden Maintenance', description: 'Professional gardening and landscaping services.', contractor: 'Green Thumb', zip: '90210', source: 'internal' },
     { id: 'internal-4', title: 'Web Development', description: 'Custom website design and development.', contractor: 'Code Master', zip: '02108', source: 'internal' },
+    { id: 'internal-5', title: 'House Cleaning', description: 'Thorough and reliable house cleaning services.', contractor: 'Clean Sweep', zip: '60601', source: 'internal' },
+    { id: 'internal-6', title: 'IT Support', description: 'On-site and remote IT assistance.', contractor: 'Tech Solutions', zip: '75001', source: 'internal' },
+    { id: 'internal-7', title: 'Mobile Car Wash', description: 'We come to you for a sparkling clean car.', contractor: 'Sparkle Auto', zip: '94103', source: 'internal' },
+    { id: 'internal-8', title: 'Tutoring Services', description: 'Experienced tutors for all subjects.', contractor: 'Brain Boost', zip: '10001', source: 'internal' },
+    { id: 'internal-9', title: 'Personal Training', description: 'Achieve your fitness goals with a certified trainer.', contractor: 'Fit Life', zip: '90210', source: 'internal' },
+    { id: 'internal-10', title: 'Pet Sitting', description: 'Reliable and caring pet sitting services.', contractor: 'Pet Pals', zip: '02108', source: 'internal' },
   ];
 
   if (req.method === 'GET') {
