@@ -34,7 +34,7 @@ export default async function handler(req, res) {
     // 2. Conceptually fetch external services - REMOVED
     // The application will now only show services from internal contractors.
 
-    res.status(200).json(uniqueServices);
+    res.status(200).json(combinedServices);
   } else {
     res.setHeader('Allow', ['GET']);
     res.status(405).end(`Method ${req.method} Not Allowed`);
