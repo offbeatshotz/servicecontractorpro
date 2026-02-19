@@ -14,7 +14,7 @@ export default async function handler(req, res) {
         service.description.toLowerCase().includes(query.toLowerCase())
       ) : true;
       const matchesZipCode = zipCode ? service.zip === zipCode : true;
-      return matchesQuery && matchesZipCode;
+      return matchesQuery && matchesZipCode && service.source !== 'internal';
     }).map(service => {
       const modifier = service.priceModifiers && service.priceModifiers[zipCode] ? service.priceModifiers[zipCode] : 1.0;
       return { ...service, estimatedPrice: service.price * modifier };

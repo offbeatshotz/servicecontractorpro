@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import AuthButton from './AuthButton'; // Import AuthButton
+import ThemeSwitcher from './ThemeSwitcher'; // Import ThemeSwitcher
 
 function Navbar({ isAuthenticated, userId, setIsAuthenticated, setUserId }) { // Accept new props
   // Callback for AuthButton on successful authentication
@@ -40,6 +41,9 @@ function Navbar({ isAuthenticated, userId, setIsAuthenticated, setUserId }) { //
               onAuthSuccess={handleAuthSuccess}
               onLogout={handleLogout}
             />
+          </li>
+          <li>
+            <ThemeSwitcher />
           </li>
         </ul>
       </div>

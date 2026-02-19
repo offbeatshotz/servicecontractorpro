@@ -13,7 +13,8 @@ body {
   color: var(--color-text-primary); /* Use a CSS variable for primary text */
 }
 
-:root {
+/* Light theme */
+.theme-light {
   --color-primary: #4CAF50; /* A shade of green */
   --color-secondary: #2196F3; /* A shade of blue */
   --color-background-primary: #E8F5E9; /* Light green background */
@@ -21,6 +22,17 @@ body {
   --color-text-primary: #212121; /* Dark grey for primary text */
   --color-text-secondary: #757575; /* Medium grey for secondary text */
   --color-accent: #FFC107; /* Amber for accents */
+}
+
+/* Dark theme */
+.theme-dark {
+  --color-primary: #66BB6A; /* Lighter green for dark theme */
+  --color-secondary: #64B5F6; /* Lighter blue for dark theme */
+  --color-background-primary: #212121; /* Dark background */
+  --color-background-secondary: #424242; /* Darker grey for cards/sections */
+  --color-text-primary: #E0E0E0; /* Light grey for primary text */
+  --color-text-secondary: #9E9E9E; /* Lighter grey for secondary text */
+  --color-accent: #FFD54F; /* Lighter amber for accents */
 }
 
 a {

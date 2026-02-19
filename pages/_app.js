@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head'; // Import Head
 import { getAuthToken, decryptToken, saveAuthToken, removeAuthToken } from '../lib/auth';
+import { ThemeProvider } from '../components/ThemeContext';
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
@@ -72,9 +73,11 @@ function MyApp({ Component, pageProps }) {
       <Head>
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet" />
       </Head>
-      <Layout userId={userId} isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} setUserId={setUserId}> {/* Pass auth status to Layout if needed */}
-        <Component {...pageProps} userId={userId} isAuthenticated={isAuthenticated} /> {/* Pass to individual pages */}
-      </Layout>
+      <ThemeProvider>
+        <Layout userId={userId} isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} setUserId={setUserId}> {/* Pass auth status to Layout if needed */}
+          <Component {...pageProps} userId={userId} isAuthenticated={isAuthenticated} /> {/* Pass to individual pages */}
+        </Layout>
+      </ThemeProvider>
     </>
   );
 }

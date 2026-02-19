@@ -13,6 +13,18 @@ function ServicesPage() {
   const [geolocationError, setGeolocationError] = useState(null);
   const [showContactForm, setShowContactForm] = useState(false); // State to control form visibility
   const [selectedServiceForContact, setSelectedServiceForContact] = useState(null); // State to hold service for contact
+  const [trackedContractors, setTrackedContractors] = useState([]); // State to hold tracked contractors
+
+  useEffect(() => {
+    const storedTracked = localStorage.getItem('trackedContractors');
+    if (storedTracked) {
+      setTrackedContractors(JSON.parse(storedTracked));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('trackedContractors', JSON.stringify(trackedContractors));
+  }, [trackedContractors]);
 
   const fetchServices = useCallback(async () => {
     setLoading(true);
@@ -101,6 +113,17 @@ function ServicesPage() {
     handleContactFormClose();
   };
 
+  const handleTrackToggle = (service) => {
+    setTrackedContractors((prevTracked) => {
+      const isCurrentlyTracked = prevTracked.some(tc => tc.userId === service.userId);
+      if (isCurrentlyTracked) {
+        return prevTracked.filter(tc => tc.userId !== service.userId);
+      } else {
+        return [...prevTracked, { userId: service.userId, zip: service.zip }];
+      }
+    });
+  };
+
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
       <Head>
@@ -148,7 +171,24 @@ function ServicesPage() {
 
         {!loading && !error && services.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {services.map(service => (
+            {services.map(service => {
+              const isContractorTracked = trackedContractors.some(tc => tc.userId === service.userId);
+              let competitorRate = null;
+
+              if (isContractorTracked) {
+                const competitors = services.filter(compService =>
+                  compService.zip === service.zip &&
+                  compService.userId !== service.userId &&
+                  compService.price // Ensure price exists
+                );
+
+                if (competitors.length > 0) {
+                  const totalCompetitorPrice = competitors.reduce((sum, compService) => sum + compService.price, 0);
+                  competitorRate = (totalCompetitorPrice / competitors.length).toFixed(2);
+                }
+              }
+
+              return (
               <div key={service.id} className="bg-backgroundSecondary rounded-lg shadow-md p-6">
                 <h3 className="text-xl font-bold text-textPrimary mb-2">{service.title}</h3>
                 <p className="text-textSecondary mb-4">{service.description}</p>
@@ -159,11 +199,24 @@ function ServicesPage() {
                 <p className="text-sm text-textSecondary"><strong>Estimates:</strong> {service.estimates || 'N/A'}</p>
                 <p className="text-sm text-textSecondary"><strong>Plan:</strong> {service.plan || 'N/A'}</p>
                 {service.contractor && <p className="text-sm text-textSecondary"><strong>Contractor:</strong> {service.contractor}</p>}
+
+                {isContractorTracked && competitorRate && (
+                  <p className="text-sm text-green-600 font-semibold">Avg. Competitor Rate (Same Zip): ${competitorRate}</p>
+                )}
+                {isContractorTracked && !competitorRate && (
+                  <p className="text-sm text-yellow-600">No direct competitors found in this zip for tracking.</p>
+                )}
                 <button
                   onClick={() => handleContactClick(service)} // Updated onClick handler
                   className="mt-4 w-full bg-primary hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
                 >
                   Contact Contractor
+                </button>
+                <button
+                  onClick={() => handleTrackToggle(service)}
+                  className={`mt-2 w-full ${isContractorTracked ? 'bg-red-500 hover:bg-red-700' : 'bg-blue-500 hover:bg-blue-700'} text-white font-bold py-2 px-4 rounded`}
+                >
+                  {isContractorTracked ? 'Untrack Contractor' : 'Track Contractor'}
                 </button>
               </div>
             ))}
