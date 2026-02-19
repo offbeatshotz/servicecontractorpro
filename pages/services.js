@@ -219,7 +219,7 @@ function ServicesPage() {
                   {isContractorTracked ? 'Untrack Contractor' : 'Track Contractor'}
                 </button>
               </div>
-            ))}
+            });
           </div>
         ) : (
           !loading && !error && <p className="text-center text-textSecondary col-span-full">No services found matching your criteria.</p>
