@@ -67,7 +67,7 @@ function MyApp({ Component, pageProps }) {
   }
 
   return (
-    <Layout userId={userId} isAuthenticated={isAuthenticated}> {/* Pass auth status to Layout if needed */}
+    <Layout userId={userId} isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} setUserId={setUserId}> {/* Pass auth status to Layout if needed */}
       <Component {...pageProps} userId={userId} isAuthenticated={isAuthenticated} /> {/* Pass to individual pages */}
     </Layout>
   );
