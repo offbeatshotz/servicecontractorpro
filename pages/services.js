@@ -73,7 +73,7 @@ function ServicesPage() {
                 setGeolocationError('Could not find zip code for your location.');
                 alert('Could not find zip code for your location.');
               }
-            )
+            })
             .catch(error => {
               setGeolocationError('Failed to reverse geocode location.');
               console.error('Reverse geocoding error:', error);
