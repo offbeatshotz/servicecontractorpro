@@ -147,6 +147,51 @@ function ServicesPage() {
     // The form will be closed by onSubmit in FeedbackForm
   };
 
+  // Helper component to render a single service card
+  const ServiceCard = ({ service, isContractorTracked, competitorRate, averageRating, handleContactClick, handleTrackToggle, handleLeaveFeedbackClick }) => {
+    return (
+      <div key={service.id} className="bg-backgroundSecondary rounded-lg shadow-md p-6">
+        <h3 className="text-xl font-bold text-textPrimary mb-2">{service.title}</h3>
+        {averageRating && (
+          <p className="text-sm text-yellow-500 mb-2">★ {averageRating} / 5</p>
+        )}
+        <p className="text-textSecondary mb-4">{service.description}</p>
+
+        <p className="text-sm text-textSecondary"><strong>Zip Code:</strong> {service.zip}</p>
+        <p className="text-sm text-textSecondary"><strong>Base Price:</strong> ${service.price ? service.price.toFixed(2) : 'N/A'}</p>
+        <p className="text-sm text-textSecondary"><strong>Estimated Price (Local):</strong> ${service.estimatedPrice ? service.estimatedPrice.toFixed(2) : 'N/A'}</p>
+        <p className="text-sm text-textSecondary"><strong>Estimates:</strong> {service.estimates || 'N/A'}</p>
+        <p className="text-sm text-textSecondary"><strong>Plan:</strong> {service.plan || 'N/A'}</p>
+        {service.contractor && <p className="text-sm text-textSecondary"><strong>Contractor:</strong> {service.contractor}</p>}
+
+        {isContractorTracked && competitorRate && (
+          <p className="text-sm text-green-600 font-semibold">Avg. Competitor Rate (Same Zip): ${competitorRate}</p>
+        )}
+        {isContractorTracked && !competitorRate && (
+          <p className="text-sm text-yellow-600">No direct competitors found in this zip for tracking.</p>
+        )}
+        <button
+          onClick={() => handleContactClick(service)} // Updated onClick handler
+          className="mt-4 w-full bg-primary hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Contact Contractor
+        </button>
+        <button
+          onClick={() => handleTrackToggle(service)}
+          className={`mt-2 w-full ${isContractorTracked ? 'bg-red-500 hover:bg-red-700' : 'bg-blue-500 hover:bg-blue-700'} text-white font-bold py-2 px-4 rounded`}
+        >
+          {isContractorTracked ? 'Untrack Contractor' : 'Track Contractor'}
+        </button>
+        <button
+          onClick={() => handleLeaveFeedbackClick(service)}
+          className="mt-2 w-full bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Leave Feedback
+        </button>
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
       <Head>
@@ -217,46 +262,18 @@ function ServicesPage() {
                 : null;
 
               return (
-              <div key={service.id} className="bg-backgroundSecondary rounded-lg shadow-md p-6">
-                <h3 className="text-xl font-bold text-textPrimary mb-2">{service.title}</h3>
-                {averageRating && (
-                  <p className="text-sm text-yellow-500 mb-2">★ {averageRating} / 5</p>
-                )}
-                <p className="text-textSecondary mb-4">{service.description}</p>
-
-                <p className="text-sm text-textSecondary"><strong>Zip Code:</strong> {service.zip}</p>
-                <p className="text-sm text-textSecondary"><strong>Base Price:</strong> ${service.price ? service.price.toFixed(2) : 'N/A'}</p>
-                <p className="text-sm text-textSecondary"><strong>Estimated Price (Local):</strong> ${service.estimatedPrice ? service.estimatedPrice.toFixed(2) : 'N/A'}</p>
-                <p className="text-sm text-textSecondary"><strong>Estimates:</strong> {service.estimates || 'N/A'}</p>
-                <p className="text-sm text-textSecondary"><strong>Plan:</strong> {service.plan || 'N/A'}</p>
-                {service.contractor && <p className="text-sm text-textSecondary"><strong>Contractor:</strong> {service.contractor}</p>}
-
-                {isContractorTracked && competitorRate && (
-                  <p className="text-sm text-green-600 font-semibold">Avg. Competitor Rate (Same Zip): ${competitorRate}</p>
-                )}
-                {isContractorTracked && !competitorRate && (
-                  <p className="text-sm text-yellow-600">No direct competitors found in this zip for tracking.</p>
-                )}
-                <button
-                  onClick={() => handleContactClick(service)} // Updated onClick handler
-                  className="mt-4 w-full bg-primary hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-                >
-                  Contact Contractor
-                </button>
-                <button
-                  onClick={() => handleTrackToggle(service)}
-                  className={`mt-2 w-full ${isContractorTracked ? 'bg-red-500 hover:bg-red-700' : 'bg-blue-500 hover:bg-blue-700'} text-white font-bold py-2 px-4 rounded`}
-                >
-                  {isContractorTracked ? 'Untrack Contractor' : 'Track Contractor'}
-                </button>
-                <button
-                  onClick={() => handleLeaveFeedbackClick(service)}
-                  className="mt-2 w-full bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
-                >
-                  Leave Feedback
-                </button>
-              </div>
-            })
+                <ServiceCard
+                  key={service.id}
+                  service={service}
+                  isContractorTracked={isContractorTracked}
+                  competitorRate={competitorRate}
+                  averageRating={averageRating}
+                  handleContactClick={handleContactClick}
+                  handleTrackToggle={handleTrackToggle}
+                  handleLeaveFeedbackClick={handleLeaveFeedbackClick}
+                />
+              );
+            })}
           </div>
         ) : (
           !loading && !error && <p className="text-center text-textSecondary col-span-full">No services found matching your criteria.</p>
