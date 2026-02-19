@@ -132,10 +132,14 @@ function ServicesPage() {
               <div key={service.id} className="bg-white rounded-lg shadow-md p-6">
                 <h3 className="text-xl font-bold text-gray-900 mb-2">{service.title}</h3>
                 <p className="text-gray-700 mb-4">{service.description}</p>
-                <p className="text-sm text-gray-600"><strong>Contractor:</strong> {service.contractor}</p>
+
                 <p className="text-sm text-gray-600"><strong>Zip Code:</strong> {service.zip}</p>
+                <p className="text-sm text-gray-600"><strong>Estimated Price:</strong> ${service.estimatedPrice ? service.estimatedPrice.toFixed(2) : 'N/A'}</p>
                 <p className="text-sm text-gray-600"><strong>Source:</strong> {service.source}</p>
-                <button className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                <button
+                  onClick={() => alert(`Contacting ${service.title} contractor... (Conceptual)`)}
+                  className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                >
                   Contact Contractor
                 </button>
               </div>
