@@ -1,136 +1,99 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import { getAuthToken, getUserId } from '../lib/auth';
 import Head from 'next/head';
 
-function RegisterPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
+function RegisterContractorPage() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [isContractor, setIsContractor] = useState(false); // Conceptual state
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
+  const router = useRouter();
 
-    if (password !== confirmPassword) {
-      setError('Passwords do not match.');
-      setLoading(false);
-      return;
+  useEffect(() => {
+    const token = getAuthToken();
+    const userId = getUserId();
+    if (token && userId) {
+      setIsAuthenticated(true);
+      setCurrentUserId(userId);
+      // In a real app, you'd check a backend API to see if this userId is already a contractor
+      // For this conceptual demo, we'll simulate it.
+      // For now, assume a fresh login means they are not yet a contractor.
+    } else {
+      setIsAuthenticated(false);
+      setCurrentUserId(null);
     }
+    setLoading(false);
+  }, []);
 
-    try {
-      // Simulate API call for registration
-      console.log('Attempting to register with:', { email, password });
-      // In a real application, you would make an actual API call here:
-      // const response = await fetch('/api/register', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ email, password }),
-      // });
-      // const data = await response.json();
-
-      // if (response.ok) {
-      //   console.log('Registration successful!', data);
-      //   // router.push('/login');
-      // } else {
-      //   setError(data.message || 'Registration failed.');
-      // }
-
-      await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate network delay
-
-      // Simulate successful registration
-      if (email && password) {
-        console.log('Registration successful (simulated)!');
-        alert('Registration successful (simulated)! You can now log in.');
-        // router.push('/login'); // Uncomment with useRouter
-      } else {
-        setError('Registration failed.');
-      }
-    } catch (err) {
-      setError('An unexpected error occurred.');
-      console.error(err);
-    } finally {
-      setLoading(false);
+  const handleBecomeContractor = () => {
+    // In a real application, this would involve:
+    // 1. Sending a request to a backend API to update the user's role to 'contractor'.
+    // 2. Potentially collecting more information (e.g., service categories, description).
+    // For this conceptual demo, we'll just set a local state.
+    if (isAuthenticated) {
+      setIsContractor(true);
+      // Redirect to a contractor dashboard or service posting page
+      // router.push('/contractor-dashboard');
     }
   };
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p className="text-textPrimary">Loading authentication status...</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-backgroundPrimary flex flex-col items-center justify-center py-10">
       <Head>
-        <title>Register - Contract Services</title>
+        <title>Become a Contractor</title>
       </Head>
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Create your account
-          </h2>
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
-              <label htmlFor="email-address" className="sr-only">Email address</label>
-              <input
-                id="email-address"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="sr-only">Password</label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="new-password"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-            <div>
-              <label htmlFor="confirm-password" className="sr-only">Confirm Password</label>
-              <input
-                id="confirm-password"
-                name="confirm-password"
-                type="password"
-                autoComplete="new-password"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Confirm Password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-              />
-            </div>
-          </div>
+      <div className="bg-backgroundSecondary p-8 rounded-lg shadow-xl max-w-md w-full text-center">
+        <h1 className="text-3xl font-bold text-textPrimary mb-6">Become a Contractor</h1>
 
-          {error && (
-            <div className="text-red-500 text-sm text-center">
-              {error}
-            </div>
-          )}
-
-          <div>
-            <button
-              type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-              disabled={loading}
-            >
-              {loading ? 'Registering...' : 'Register'}
-            </button>
-          </div>
-        </form>
+        {isAuthenticated ? (
+          <>
+            <p className="text-lg text-textSecondary mb-4">
+              You are currently logged in as <span className="font-semibold">{currentUserId}</span>.
+            </p>
+            {isContractor ? (
+              <p className="text-green-600 font-semibold text-xl">
+                Congratulations! You are now a contractor.
+                <br /> (Conceptual registration complete)
+              </p>
+            ) : (
+              <>
+                <p className="text-textSecondary mb-6">
+                  Click the button below to register as a contractor and start offering your services.
+                </p>
+                <button
+                  onClick={handleBecomeContractor}
+                  className="bg-primary hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
+                >
+                  Register as Contractor
+                </button>
+              </>
+            )}
+          </>
+        ) : (
+          <>
+            <p className="text-lg text-textSecondary mb-6">
+              Please authenticate to register as a contractor.
+            </p>
+            {/* In a full application, you might have a dedicated login form here or redirect.
+                For this demo, we assume authentication happens via the Navbar's AuthButton. */}
+            <p className="text-sm text-textSecondary">
+              (Use the "Authenticate" button in the navigation bar to log in.)
+            </p>
+          </>
+        )}
       </div>
     </div>
   );
 }
 
-export default RegisterPage;
+export default RegisterContractorPage;

@@ -1,6 +1,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Head from 'next/head';
+import ContactForm from '../components/ContactForm'; // Import the new ContactForm component
 
 function ServicesPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -10,6 +11,8 @@ function ServicesPage() {
   const [error, setError] = useState(null);
   const [geolocationLoading, setGeolocationLoading] = useState(false);
   const [geolocationError, setGeolocationError] = useState(null);
+  const [showContactForm, setShowContactForm] = useState(false); // State to control form visibility
+  const [selectedServiceForContact, setSelectedServiceForContact] = useState(null); // State to hold service for contact
 
   const fetchServices = useCallback(async () => {
     setLoading(true);
@@ -82,6 +85,22 @@ function ServicesPage() {
     }
   };
 
+  const handleContactClick = (service) => {
+    setSelectedServiceForContact(service);
+    setShowContactForm(true);
+  };
+
+  const handleContactFormClose = () => {
+    setShowContactForm(false);
+    setSelectedServiceForContact(null);
+  };
+
+  const handleContactFormSubmit = (formData) => {
+    console.log('Contact form submitted:', formData);
+    // Here you would typically make an API call to send the message
+    handleContactFormClose();
+  };
+
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
       <Head>
@@ -137,7 +156,7 @@ function ServicesPage() {
                 <p className="text-sm text-textSecondary"><strong>Estimated Price:</strong> ${service.estimatedPrice ? service.estimatedPrice.toFixed(2) : 'N/A'}</p>
                 <p className="text-sm text-textSecondary"><strong>Source:</strong> {service.source}</p>
                 <button
-                  onClick={() => alert(`Contacting ${service.title} contractor... (Conceptual)`)}
+                  onClick={() => handleContactClick(service)} // Updated onClick handler
                   className="mt-4 w-full bg-primary hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
                 >
                   Contact Contractor
@@ -149,6 +168,15 @@ function ServicesPage() {
           !loading && !error && <p className="text-center text-textSecondary col-span-full">No services found matching your criteria.</p>
         )}
       </div>
+
+      {/* Render the ContactForm conditionally */}
+      {showContactForm && selectedServiceForContact && (
+        <ContactForm
+          service={selectedServiceForContact}
+          onClose={handleContactFormClose}
+          onSubmit={handleContactFormSubmit}
+        />
+      )}
     </div>
   );
 }

@@ -1,19 +1,135 @@
 import Head from 'next/head';
+import { useEffect, useState } from 'react';
+import { getAuthToken } from '../lib/auth';
 
 function DashboardPage() {
+  const [invoices, setInvoices] = useState([]);
+  const [crmLogs, setCrmLogs] = useState([]);
+  const [tickets, setTickets] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      setLoading(true);
+      setError(null);
+      const authToken = getAuthToken();
+
+      if (!authToken) {
+        setError('Authentication required to view dashboard.');
+        setLoading(false);
+        return;
+      }
+
+      const headers = {
+        'Authorization': `Bearer ${authToken}`,
+      };
+
+      try {
+        const [invoicesRes, crmLogsRes, ticketsRes] = await Promise.all([
+          fetch('/api/billing/invoices', { headers }),
+          fetch('/api/crm/logs', { headers }),
+          fetch('/api/support/tickets', { headers }),
+        ]);
+
+        if (!invoicesRes.ok) throw new Error(`Error fetching invoices: ${invoicesRes.statusText}`);
+        if (!crmLogsRes.ok) throw new Error(`Error fetching CRM logs: ${crmLogsRes.statusText}`);
+        if (!ticketsRes.ok) throw new Error(`Error fetching tickets: ${ticketsRes.statusText}`);
+
+        const invoicesData = await invoicesRes.json();
+        const crmLogsData = await crmLogsRes.json();
+        const ticketsData = await ticketsRes.json();
+
+        setInvoices(invoicesData);
+        setCrmLogs(crmLogsData);
+        setTickets(ticketsData);
+
+      } catch (err) {
+        setError(err.message || 'Failed to fetch dashboard data.');
+        console.error('Dashboard data fetch error:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-backgroundPrimary text-textPrimary">
+        <p className="text-textSecondary text-lg">Loading dashboard data...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-backgroundPrimary text-textPrimary">
+        <p className="text-red-600 text-lg">Error: {error}</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col justify-center items-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-backgroundPrimary py-12 px-4 sm:px-6 lg:px-8 font-sans">
       <Head>
         <title>Dashboard - Contract Services</title>
       </Head>
-      <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
-        <h2 className="text-3xl font-extrabold text-gray-900 text-center">
+      <div className="max-w-7xl mx-auto">
+        <h2 className="text-3xl font-extrabold text-textPrimary text-center mb-8">
           Welcome to your Dashboard!
         </h2>
-        <p className="mt-4 text-lg text-gray-600 text-center">
-          This is a protected route, accessible only to authenticated users.
-        </p>
-        {/* Add more dashboard content here */}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {/* Invoices Section */}
+          <div className="bg-backgroundSecondary shadow-md rounded-lg p-6">
+            <h3 className="text-xl font-bold text-textPrimary mb-4">Your Invoices</h3>
+            {invoices.length > 0 ? (
+              <ul className="space-y-2">
+                {invoices.map(invoice => (
+                  <li key={invoice.id} className="text-textSecondary">
+                    {invoice.id}: {invoice.amount} - {invoice.status}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-textSecondary">No invoices found.</p>
+            )}
+          </div>
+
+          {/* CRM Logs Section */}
+          <div className="bg-backgroundSecondary shadow-md rounded-lg p-6">
+            <h3 className="text-xl font-bold text-textPrimary mb-4">Your CRM Logs</h3>
+            {crmLogs.length > 0 ? (
+              <ul className="space-y-2">
+                {crmLogs.map(log => (
+                  <li key={log.id} className="text-textSecondary">
+                    {new Date(log.timestamp).toLocaleDateString()}: {log.action}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-textSecondary">No CRM logs found.</p>
+            )}
+          </div>
+
+          {/* Support Tickets Section */}
+          <div className="bg-backgroundSecondary shadow-md rounded-lg p-6">
+            <h3 className="text-xl font-bold text-textPrimary mb-4">Your Support Tickets</h3>
+            {tickets.length > 0 ? (
+              <ul className="space-y-2">
+                {tickets.map(ticket => (
+                  <li key={ticket.id} className="text-textSecondary">
+                    {ticket.id}: {ticket.subject} - {ticket.status}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-textSecondary">No support tickets found.</p>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
