@@ -88,10 +88,15 @@ function DashboardPage() {
         </h2>
 
         {isContractor && (
-          <div className="text-center mb-8">
+          <div className="text-center mb-8 flex justify-center space-x-4">
             <Link href="/post-service">
               <p className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                 Post a New Service
+              </p>
+            </Link>
+            <Link href="/contractor/upload-forms">
+              <p className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                Upload Legal Forms
               </p>
             </Link>
           </div>
@@ -138,6 +143,14 @@ function DashboardPage() {
                 {tickets.map(ticket => (
                   <li key={ticket.id} className="text-textSecondary">
                     {ticket.id}: {ticket.subject} - {ticket.status}
+                    {ticket.legalForms && ticket.legalForms.length > 0 && (
+                      <ul className="ml-4 mt-1 text-xs text-textSecondary">
+                        <strong>Legal Forms:</strong>
+                        {ticket.legalForms.map(form => (
+                          <li key={form.id}><a href={`#form-${form.id}`} className="text-blue-400 hover:underline">{form.fileName}</a></li>
+                        ))}
+                      </ul>
+                    )}
                   </li>
                 ))}
               </ul>
