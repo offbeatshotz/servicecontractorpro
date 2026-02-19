@@ -1,4 +1,4 @@
-import { getUserIdFromRequest, IP_USER_ID_PREFIX } from '../../lib/auth';
+import { getUserIdFromRequest, IP_USER_ID_PREFIX } from '../../../lib/auth';
 import { allLegalForms, allTickets } from '../../../lib/db';
 
 export default async function handler(req, res) {
