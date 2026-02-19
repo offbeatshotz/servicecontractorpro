@@ -83,12 +83,12 @@ function ServicesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
       <Head>
         <title>Services - Contract Services</title>
       </Head>
       <div className="max-w-4xl mx-auto">
-        <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-8">
+        <h2 className="text-3xl font-extrabold text-textPrimary text-center mb-8">
           Available Services
         </h2>
 
@@ -103,7 +103,7 @@ function ServicesPage() {
           {/* A conceptual button for geolocation */}
           <button
             onClick={handleGeolocation}
-            className="w-full sm:w-auto py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="w-full sm:w-auto py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-secondary hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary"
             disabled={geolocationLoading}
           >
             {geolocationLoading ? 'Getting Location...' : 'Use My Current Location'}
@@ -118,27 +118,27 @@ function ServicesPage() {
         </div>
 
         {geolocationError && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+          <div className="bg-red-100 border border-red-400 text-red-600 px-4 py-3 rounded relative mb-4" role="alert">
             <span className="block sm:inline">Geolocation Error: {geolocationError}</span>
           </div>
         )}
 
-        {loading && <p className="text-center text-gray-600">Loading services...</p>}
-        {error && <p className="text-center text-red-500">Error: {error}</p>}
+        {loading && <p className="text-center text-textSecondary">Loading services...</p>}
+        {error && <p className="text-center text-red-600">Error: {error}</p>}
 
         {!loading && !error && services.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {services.map(service => (
-              <div key={service.id} className="bg-white rounded-lg shadow-md p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-2">{service.title}</h3>
-                <p className="text-gray-700 mb-4">{service.description}</p>
+              <div key={service.id} className="bg-backgroundSecondary rounded-lg shadow-md p-6">
+                <h3 className="text-xl font-bold text-textPrimary mb-2">{service.title}</h3>
+                <p className="text-textSecondary mb-4">{service.description}</p>
 
-                <p className="text-sm text-gray-600"><strong>Zip Code:</strong> {service.zip}</p>
-                <p className="text-sm text-gray-600"><strong>Estimated Price:</strong> ${service.estimatedPrice ? service.estimatedPrice.toFixed(2) : 'N/A'}</p>
-                <p className="text-sm text-gray-600"><strong>Source:</strong> {service.source}</p>
+                <p className="text-sm text-textSecondary"><strong>Zip Code:</strong> {service.zip}</p>
+                <p className="text-sm text-textSecondary"><strong>Estimated Price:</strong> ${service.estimatedPrice ? service.estimatedPrice.toFixed(2) : 'N/A'}</p>
+                <p className="text-sm text-textSecondary"><strong>Source:</strong> {service.source}</p>
                 <button
                   onClick={() => alert(`Contacting ${service.title} contractor... (Conceptual)`)}
-                  className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                  className="mt-4 w-full bg-primary hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
                 >
                   Contact Contractor
                 </button>
@@ -146,7 +146,7 @@ function ServicesPage() {
             ))}
           </div>
         ) : (
-          !loading && !error && <p className="text-center text-gray-600 col-span-full">No services found matching your criteria.</p>
+          !loading && !error && <p className="text-center text-textSecondary col-span-full">No services found matching your criteria.</p>
         )}
       </div>
     </div>

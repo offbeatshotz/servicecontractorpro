@@ -2,7 +2,7 @@ import Navbar from './Navbar';
 
 function Layout({ children, isAuthenticated, userId, setIsAuthenticated, setUserId }) {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-backgroundPrimary text-textPrimary font-sans">
       <Navbar
         isAuthenticated={isAuthenticated}
         userId={userId}

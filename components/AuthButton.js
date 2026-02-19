@@ -46,7 +46,7 @@ function AuthButton({ isAuthenticated, userId, onAuthSuccess, onLogout }) {
           <span className="text-sm">Welcome, {userId}</span>
           <button
             onClick={handleLogoutClick}
-            className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded text-sm"
+            className="bg-secondary hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-sm"
           >
             Logout
           </button>
@@ -55,13 +55,13 @@ function AuthButton({ isAuthenticated, userId, onAuthSuccess, onLogout }) {
         <button
           onClick={handleAuthClick}
           disabled={loading}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-sm"
+          className="bg-primary hover:bg-green-700 text-white font-bold py-1 px-2 rounded text-sm"
         >
           {loading ? 'Authenticating...' : 'Authenticate'}
         </button>
       )}
-      {message && <p className="text-green-500 text-sm mt-1">{message}</p>}
-      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+      {message && <p className="text-primary text-sm mt-1">{message}</p>}
+      {error && <p className="text-red-600 text-sm mt-1">{error}</p>}
     </div>
   );
 }

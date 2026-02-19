@@ -2,6 +2,7 @@ import '../styles/globals.css';
 import Layout from '../components/Layout';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import Head from 'next/head'; // Import Head
 import { getAuthToken, decryptToken, saveAuthToken, removeAuthToken } from '../lib/auth';
 
 function MyApp({ Component, pageProps }) {
@@ -60,16 +61,21 @@ function MyApp({ Component, pageProps }) {
 
   if (loadingAuth) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <p className="text-gray-700 text-lg">Setting up your session...</p>
+      <div className="min-h-screen flex items-center justify-center bg-backgroundPrimary text-textPrimary">
+        <p className="text-textSecondary text-lg">Setting up your session...</p>
       </div>
     );
   }
 
   return (
-    <Layout userId={userId} isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} setUserId={setUserId}> {/* Pass auth status to Layout if needed */}
-      <Component {...pageProps} userId={userId} isAuthenticated={isAuthenticated} /> {/* Pass to individual pages */}
-    </Layout>
+    <>
+      <Head>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet" />
+      </Head>
+      <Layout userId={userId} isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} setUserId={setUserId}> {/* Pass auth status to Layout if needed */}
+        <Component {...pageProps} userId={userId} isAuthenticated={isAuthenticated} /> {/* Pass to individual pages */}
+      </Layout>
+    </>
   );
 }
 

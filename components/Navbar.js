@@ -15,7 +15,7 @@ function Navbar({ isAuthenticated, userId, setIsAuthenticated, setUserId }) { //
   };
 
   return (
-    <nav className="bg-gray-800 p-4 text-white">
+    <nav className="bg-primary p-4 text-white shadow-md">
       <div className="container mx-auto flex justify-between items-center">
         <Link href="/">
           <p className="text-xl font-bold cursor-pointer">Contract Services</p>
@@ -23,13 +23,13 @@ function Navbar({ isAuthenticated, userId, setIsAuthenticated, setUserId }) { //
         <ul className="flex space-x-4 items-center"> {/* Added items-center for vertical alignment */}
           <li>
             <Link href="/services">
-              <p className="hover:text-gray-300 cursor-pointer">Services</p>
+              <p className="hover:text-accent cursor-pointer">Services</p>
             </Link>
           </li>
           {/* Dashboard link always visible, but content might be protected */}
           <li>
             <Link href="/dashboard">
-              <p className="hover:text-gray-300 cursor-pointer">Dashboard</p>
+              <p className="hover:text-accent cursor-pointer">Dashboard</p>
             </Link>
           </li>
           {/* AuthButton replaces Login/Register links */}
