@@ -1,4 +1,4 @@
-import { getUserIdFromRequest, IP_USER_ID_PREFIX } from '../../../lib/auth';
+import { getUserIdFromRequest, IP_USER_ID_PREFIX, getMockUserName } from '../../../lib/auth';
 import { allServices } from '../../../lib/db';
 
 export default async function handler(req, res) {
@@ -19,7 +19,7 @@ export default async function handler(req, res) {
       id: `srv-${Date.now()}`,
       title,
       description,
-      contractor: `User ${userId.substring(IP_USER_ID_PREFIX.length)}`, // Conceptual contractor name
+      contractor: getMockUserName(userId), // Use a conceptual real name
       zip: zipCode,
       userId,
       price: parseFloat(price),

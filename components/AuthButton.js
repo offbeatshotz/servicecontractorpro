@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { saveAuthToken, removeAuthToken } from '../lib/auth';
+import { saveAuthToken, removeAuthToken, getMockUserName } from '../lib/auth';
 
 function AuthButton({ isAuthenticated, userId, onAuthSuccess, onLogout }) {
   const [loading, setLoading] = useState(false);
@@ -43,7 +43,7 @@ function AuthButton({ isAuthenticated, userId, onAuthSuccess, onLogout }) {
     <div>
       {isAuthenticated ? (
         <div className="flex items-center space-x-2">
-          <span className="text-sm">Welcome, {userId}</span>
+          <span className="text-sm">Welcome, {getMockUserName(userId)}</span>
           <button
             onClick={handleLogoutClick}
             className="bg-secondary hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-sm"

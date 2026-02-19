@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
-import { getAuthToken } from '../lib/auth';
+import { getAuthToken, getUserId } from '../lib/auth';
+import Link from 'next/link';
 
 function DashboardPage() {
   const [invoices, setInvoices] = useState([]);
@@ -8,18 +9,23 @@ function DashboardPage() {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isContractor, setIsContractor] = useState(false);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       setLoading(true);
       setError(null);
       const authToken = getAuthToken();
+      const currentUserId = getUserId();
 
-      if (!authToken) {
+      if (!authToken || !currentUserId) {
         setError('Authentication required to view dashboard.');
         setLoading(false);
         return;
       }
+
+      // Conceptual check for contractor role
+      setIsContractor(currentUserId.startsWith('ip_user_mock1')); // Example: user 'ip_user_mock1' is a contractor
 
       const headers = {
         'Authorization': `Bearer ${authToken}`,
@@ -80,6 +86,16 @@ function DashboardPage() {
         <h2 className="text-3xl font-extrabold text-textPrimary text-center mb-8">
           Welcome to your Dashboard!
         </h2>
+
+        {isContractor && (
+          <div className="text-center mb-8">
+            <Link href="/post-service">
+              <p className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                Post a New Service
+              </p>
+            </Link>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {/* Invoices Section */}

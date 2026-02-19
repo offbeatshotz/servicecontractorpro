@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { getAuthToken, getUserId } from '../lib/auth';
+import { getAuthToken, getUserId, getMockUserName } from '../lib/auth';
 import Head from 'next/head';
 
 function RegisterContractorPage() {
@@ -59,7 +59,7 @@ function RegisterContractorPage() {
         {isAuthenticated ? (
           <>
             <p className="text-lg text-textSecondary mb-4">
-              You are currently logged in as <span className="font-semibold">{currentUserId}</span>.
+              You are currently logged in as <span className="font-semibold">{getMockUserName(currentUserId)}</span>.
             </p>
             {isContractor ? (
               <p className="text-green-600 font-semibold text-xl">
