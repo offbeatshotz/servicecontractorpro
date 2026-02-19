@@ -81,15 +81,15 @@ function ServicesPage() {
             })
             .finally(() => {
               setGeolocationLoading(false);
-            })
-        },
+            }); // Correctly closed fetch chain
+        }, // Comma separating success and error callbacks for getCurrentPosition
         (error) => {
           setGeolocationLoading(false);
           setGeolocationError(error.message);
           console.error('Geolocation error:', error);
           alert(`Geolocation failed: ${error.message}`);
-        }
-      );
+        } // Correctly closed error callback for getCurrentPosition
+      ); // Correctly closed getCurrentPosition
     } else {
       setGeolocationLoading(false);
       setGeolocationError('Geolocation is not supported by this browser.');
@@ -180,7 +180,7 @@ function ServicesPage() {
                   compService.zip === service.zip &&
                   compService.userId !== service.userId &&
                   compService.price // Ensure price exists
-                );
+                });
 
                 if (competitors.length > 0) {
                   const totalCompetitorPrice = competitors.reduce((sum, compService) => sum + compService.price, 0);
